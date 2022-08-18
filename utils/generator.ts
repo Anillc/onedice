@@ -1,5 +1,5 @@
 import { load } from 'js-yaml'
-import { readFileSync } from 'fs'
+import { readFileSync, writeFileSync } from 'fs'
 import { resolve } from 'path'
 import uniqWith from 'lodash.uniqwith'
 import groupBy from 'lodash.groupby'
@@ -22,7 +22,7 @@ interface Itemset {
   next: Record<string, number>
 }
 
-const g = load(readFileSync(resolve(__dirname, '../src/grammar.yaml'), 'utf-8')) as any
+const g = load(readFileSync(resolve(__dirname, './grammar.yaml'), 'utf-8')) as any
 
 let terms: string[]
 const grammars: Record<string, Producer[]> = {}
@@ -215,4 +215,5 @@ clst.forEach(itemset => {
   })
 })
 
-console.log(JSON.stringify(action))
+writeFileSync(resolve(__dirname, '../src/grammar.json') ,JSON.stringify(grammars))
+writeFileSync(resolve(__dirname, '../src/table.json') ,JSON.stringify(action))
