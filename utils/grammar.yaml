@@ -1,82 +1,64 @@
 term: + - * x / ^ ( ) d k q p b a m c f num
 
-G: grammar  E1
+G: 1g        E1
 
 E1:
-- add       E1 + E2
-- sub       E1 - E2
-- elem      E2
+- 2add       E1 + E2
+- 3sub       E1 - E2
+- 4elem      E2
 
 E2:
-- mul       E2 * E3
-- mul       E2 x E3
-- div       E2 / E3
-- elem      E3
+- 5mul1      E2 * E3
+- 6mul2      E2 x E3
+- 7div       E2 / E3
+- 8elem      E3
 
 E3:
-- power     E3 ^ E4
-- elem      E4
+- 9power     E3 ^ E4
+- 10elem     E4
 
 E4:
-- d         D
-- p         P
-- a         A
-- c         C
-- f         F
-- elem      E5
+- 11d        D
+- 12p        P
+- 13a        A
+- 14c        C
+- 15f        F
+- 16elem     E5
 
 E5:
-- bracket   ( E1 )
-- num       num
-- neg       - E5
+- 17bracket   ( E1 )
+- 18num       num
 
-DA:
-- da        E4
-- empty     empty
+O:
+- 19num       E5
+- 20empty     empty
 
-DCD:
-- dcdk       k E5
-- dcdq       q E5
-- dcdp       p E5
-- dcdb       b E5
-- empty      empty
+D: 21d        O d O DO
 
-DE:
-- dea        a E5
-- empty      empty
-
-D: d1        DA d E5 DCD DE
-
-PA:
-- pa         E4
-- empty      empty
-
-PB:
-- pb         E5
-- empty      empty
+DO:
+- 22dok       DO k E5
+- 23doq       DO q E5
+- 24dop       DO p E5
+- 25dob       DO b E5
+- 26doa       DO a E5
+- 27empty     empty
 
 P:
-- pp         PA p PB
-- pb         PA b PB
+- 28pp        O p O
+- 29pb        O b O
 
-AC:
-- ack        k E5
-- empty      empty
+A: 30a        O a O AO
 
-AD:
-- adq        q E5
-- empty      empty
+AO:
+- 31aok       AO k E5
+- 32aoq       AO q E5
+- 33aom       AO m E5
+- 34empty     empty
 
-AE:
-- aem        m E5
-- empty      empty
+C: 35c        O c O CO
 
-A: a1        E4 a E5 AC AD AE
+CO:
+- 36com       CO m E5
+- 37empty     empty
 
-CC:
-- ccm        m E5
-- empty      empty
-
-C: c1        E4 c E5 CC
-
-F: f1        E4 f E5
+F: 38f        O f O

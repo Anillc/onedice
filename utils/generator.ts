@@ -24,7 +24,7 @@ interface Itemset {
 
 const g = load(readFileSync(resolve(__dirname, './grammar.yaml'), 'utf-8')) as any
 
-let terms: string[]
+let terms: string[] = []
 const grammars: Record<string, Producer[]> = {}
 
 for (const [key, value] of Object.entries(g)) {
@@ -53,7 +53,8 @@ function itemsEqual(a: Item[], b: Item[]) {
   return true
 }
 
-function first(query: string[], stack: string[] = []): Set<string> {
+function first(originalQuery: string[], stack: string[] = []): Set<string> {
+  const query = [...originalQuery]
   const result = new Set<string>()
   if (query.length === 0) {
     result.add('empty')
@@ -158,14 +159,10 @@ function cluster() {
   return itemsets
 }
 
-type Action = {
-  type: 'shift' | 'goto'
-  target: number
-} | {
-  type: 'reduce'
+interface Action {
+  type: 'shift' | 'reduce' | 'goto'
   target: string
 }
-
 
 function actionEqual(a: Action, b: Action) {
   if (a === b) return true
@@ -188,7 +185,7 @@ function getOrCreate(state: number): Record<string, Action> {
 clst.forEach(itemset => {
   const states = getOrCreate(itemset.id)
   itemset.items.forEach(item => {
-    if (item.position === item.producer.tokens.length) {
+    if (item.position === item.producer.tokens.length || item.producer.tokens[0] === 'empty') {
       const origin = states[item.forward]
       const action: Action = {
         type: 'reduce',
@@ -201,7 +198,7 @@ clst.forEach(itemset => {
       if (!actionEqual(origin, action)) throw 'conflict'
     } else {
       const token = item.producer.tokens[item.position]
-      const target = itemset.next[token]
+      const target = String(itemset.next[token])
       const origin = states[token]
       const action: Action = terms.includes(token)
         ? { type: 'shift', target }
@@ -215,5 +212,9 @@ clst.forEach(itemset => {
   })
 })
 
-writeFileSync(resolve(__dirname, '../src/grammar.json') ,JSON.stringify(grammars))
-writeFileSync(resolve(__dirname, '../src/table.json') ,JSON.stringify(action))
+terms.pop() // pop $
+writeFileSync(resolve(__dirname, '../src/grammar.json'), JSON.stringify({
+  terms,
+  grammars,
+}))
+writeFileSync(resolve(__dirname, '../src/table.json'), JSON.stringify(action))
