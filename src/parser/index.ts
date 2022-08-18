@@ -2,6 +2,8 @@ import { grammars } from './grammar.json'
 import table from './table.json'
 import { lexer, Token } from './lexer'
 
+export * from './lexer'
+
 export interface Producer {
   id: string
   name: string

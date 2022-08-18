@@ -213,8 +213,8 @@ clst.forEach(itemset => {
 })
 
 terms.pop() // pop $
-writeFileSync(resolve(__dirname, '../src/grammar.json'), JSON.stringify({
+writeFileSync(resolve(__dirname, '../src/parser/grammar.json'), JSON.stringify({
   terms,
   grammars,
 }))
-writeFileSync(resolve(__dirname, '../src/table.json'), JSON.stringify(action))
+writeFileSync(resolve(__dirname, '../src/parser/table.json'), JSON.stringify(action))
