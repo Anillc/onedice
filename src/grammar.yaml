@@ -1,0 +1,82 @@
+term: + - * x / ^ ( ) d k q p b a m c f num
+
+G: grammar  E1
+
+E1:
+- add       E1 + E2
+- sub       E1 - E2
+- elem      E2
+
+E2:
+- mul       E2 * E3
+- mul       E2 x E3
+- div       E2 / E3
+- elem      E3
+
+E3:
+- power     E3 ^ E4
+- elem      E4
+
+E4:
+- d         D
+- p         P
+- a         A
+- c         C
+- f         F
+- elem      E5
+
+E5:
+- bracket   ( E1 )
+- num       num
+- neg       - E5
+
+DA:
+- da        E4
+- empty     empty
+
+DCD:
+- dcdk       k E5
+- dcdq       q E5
+- dcdp       p E5
+- dcdb       b E5
+- empty      empty
+
+DE:
+- dea        a E5
+- empty      empty
+
+D: d1        DA d E5 DCD DE
+
+PA:
+- pa         E4
+- empty      empty
+
+PB:
+- pb         E5
+- empty      empty
+
+P:
+- pp         PA p PB
+- pb         PA b PB
+
+AC:
+- ack        k E5
+- empty      empty
+
+AD:
+- adq        q E5
+- empty      empty
+
+AE:
+- aem        m E5
+- empty      empty
+
+A: a1        E4 a E5 AC AD AE
+
+CC:
+- ccm        m E5
+- empty      empty
+
+C: c1        E4 c E5 CC
+
+F: f1        E4 f E5
