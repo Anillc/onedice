@@ -207,6 +207,10 @@ clst.forEach(itemset => {
         states[token] = action
         return
       }
+      if (action.type === 'shift' && ['24dop', '25dob', '26doa'].includes(item.producer.id)) {
+        states[token] = action
+        return
+      }
       if (!actionEqual(origin, action)) throw 'conflict'
     }
   })
