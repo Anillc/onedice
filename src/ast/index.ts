@@ -7,6 +7,15 @@ import { PNode } from './dice/p'
 import { NumberNode } from './number'
 import { SimpleNode } from './simple'
 
+export * from './bracket'
+export * from './simple'
+export * from './number'
+export * from './dice/d'
+export * from './dice/p'
+export * from './dice/a'
+export * from './dice/c'
+export * from './dice/f'
+
 export interface Env {
   d?: {
     a?: number
@@ -42,7 +51,6 @@ export type Flow = [string, number]
 export interface Node {
   eval(env: Env, flow: Flow[]): number
 }
-
 
 export function resolve(node: ParserNode): Node {
   const { producer, value } = node as ASTNode

@@ -22,7 +22,7 @@ export class DNode implements Node {
     
     let res: number
     if (e !== null) {
-      res = dice(`${a}a${b + 1}k${e}m${b}`).eval(env, [])
+      res = dice(`${a}a${b + 1}k${e}m${b}`)()
     } else {
       if (this.kq && this.pb) throw new Error('k/q 与 p/b 不可同时使用')
       if (this.kq && c > b) throw new Error('选取骰子个数大于骰子个数')
@@ -37,7 +37,7 @@ export class DNode implements Node {
           break
         case 'p':
         case 'b':
-          roll = roll.map(_ => dice(`${this.pb}${d}`).eval(env, []))
+          roll = roll.map(_ => dice(`${this.pb}${d}`)())
           break
       }
       res = sum(roll)

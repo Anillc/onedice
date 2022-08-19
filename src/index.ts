@@ -1,13 +1,22 @@
-import { Env, Node, resolve } from './ast'
+import { Env, Flow, Node, resolve } from './ast'
 import { parse } from './parser'
 
+export * from './ast'
 export * from './parser'
 
-export function dice(input: string): Node {
-  return resolve(parse(input))
+interface Dice {
+  root: Node
+  (env?: Env, flow?: Flow[]): number
 }
 
-function defaultEnv(env: Env = {}) {
+export function dice(input: string): Dice {
+  const root = resolve(parse(input))
+  const dice = (env: Env = {}, flow = []) => root.eval(getEnv(env), flow)
+  Object.assign(dice, { root })
+  return dice as Dice
+}
+
+function getEnv(env: Env = {}) {
   return {
     d: {
       a: 1, b: 100, c: null, d: 0, e: null,
