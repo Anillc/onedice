@@ -25,11 +25,21 @@ interface Itemset {
 const g = load(readFileSync(resolve(__dirname, './grammar.yaml'), 'utf-8')) as any
 
 let terms: string[] = []
+let shiftList: string[] = []
+let reduceList: string[] = []
 const grammars: Record<string, Producer[]> = {}
 
 for (const [key, value] of Object.entries(g)) {
   if (key === 'term') {
     terms = (value as string).split(' ').concat('$')
+    continue
+  }
+  if (key === 'shift') {
+    shiftList = (value as string).split(' ')
+    continue
+  }
+  if (key === 'reduce') {
+    reduceList = (value as string).split(' ')
     continue
   }
   const producers: string[] = Array.isArray(value) ? value : [value]
@@ -164,9 +174,14 @@ interface Action {
   target: string
 }
 
-function actionEqual(a: Action, b: Action) {
-  if (a === b) return true
-  return a.type === b.type && a.target === b.target
+function actionWrite(origin: Action, action: Action, item: Item) {
+  if (action === origin) return false
+  if(action.type === origin.type && action.target === origin.target) return false
+  if (action.type === 'shift' && origin.type === 'reduce'
+    && shiftList.includes(item.producer.id)) return true
+  if (action.type === 'reduce' && origin.type === 'shift'
+    && reduceList.includes(item.producer.id)) return true
+  throw new Error('conflict')
 }
 
 const clst = cluster()
@@ -191,11 +206,9 @@ clst.forEach(itemset => {
         type: 'reduce',
         target: item.producer.id
       }
-      if (!origin) {
+      if (!origin || actionWrite(origin, action, item)) {
         states[item.forward] = action
-        return
       }
-      if (!actionEqual(origin, action)) throw 'conflict'
     } else {
       const token = item.producer.tokens[item.position]
       const target = String(itemset.next[token])
@@ -203,15 +216,9 @@ clst.forEach(itemset => {
       const action: Action = terms.includes(token)
         ? { type: 'shift', target }
         : { type: 'goto', target }
-      if (!origin) {
+      if (!origin || actionWrite(origin, action, item)) {
         states[token] = action
-        return
       }
-      if (action.type === 'shift' && ['24dop', '25dob', '26doa'].includes(item.producer.id)) {
-        states[token] = action
-        return
-      }
-      if (!actionEqual(origin, action)) throw 'conflict'
     }
   })
 })

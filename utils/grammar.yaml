@@ -1,4 +1,6 @@
 term: + - * x / ^ ( ) d k q p b a m c f num
+shift: 26dop 27dob 28doa
+reduce: ''
 
 G: 1g         E1
 
@@ -29,40 +31,40 @@ E5:
 - 17brac      ( E1 )
 - 18num       num
 
-O:
-- 19o         E5
+O4:
+- 19o4        E4
 - 20empty     empty
 
-O4:
-- 39o4        E4
-- 40empty     empty
+O5:
+- 21o5        E5
+- 22empty     empty
 
-D: 21d        O4 d O DO
+D: 23d        O4 d O5 DO
 
 DO:
-- 22dok       DO k O
-- 23doq       DO q O
-- 24dop       DO p O
-- 25dob       DO b O
-- 26doa       DO a O
-- 27empty     empty
+- 24dok       DO k O5
+- 25doq       DO q O5
+- 26dop       DO p O5
+- 27dob       DO b O5
+- 28doa       DO a O5
+- 29empty     empty
 
 P:
-- 28pp        O4 p O
-- 29pb        O4 b O
+- 30pp        O4 p O5
+- 31pb        O4 b O5
 
-A: 30a        O4 a O AO
+A: 32a        O4 a O5 AO
 
 AO:
-- 31aok       AO k O
-- 32aoq       AO q O
-- 33aom       AO m O
-- 34empty     empty
+- 33aok       AO k O5
+- 34aoq       AO q O5
+- 35aom       AO m O5
+- 36empty     empty
 
-C: 35c        O4 c O CO
+C: 37c        O4 c O5 CO
 
 CO:
-- 36com       CO m O
-- 37empty     empty
+- 38com       CO m O5
+- 39empty     empty
 
-F: 38f        O4 f O
+F: 40f        O4 f O5

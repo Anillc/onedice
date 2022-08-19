@@ -19,7 +19,7 @@ export class CNode implements Node {
     let round = 0
     while (count !== 0) {
       roll = fill(count).map(_ => random(1, c))
-      count = roll.filter(e => e >= b).length
+      count = roll.filter(n => n >= b).length
       round++
     }
     const result = (round == 0 ? round - 1 : 0) * c + Math.max(...roll)

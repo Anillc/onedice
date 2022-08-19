@@ -21,7 +21,7 @@ export class DNode implements Node {
     const e = this.e?.eval(env, flow) ?? env.d.e
     
     let res: number
-    if (e) {
+    if (e !== null) {
       res = dice(`${a}a${b + 1}k${e}m${b}`).eval(env, [])
     } else {
       if (this.kq && this.pb) throw new Error('k/q 与 p/b 不可同时使用')

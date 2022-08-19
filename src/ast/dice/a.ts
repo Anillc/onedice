@@ -22,7 +22,7 @@ export class ANode implements Node {
     const roll = []
     while (count !== 0) {
       const r = fill(count).map(_ => random(1, e))
-      count = r.filter(e => e >= b).length
+      count = r.filter(n => n >= b).length
       roll.push(...r)
     }
     const result = roll.filter(e => {

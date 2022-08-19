@@ -58,7 +58,7 @@ export function resolve(node: ParserNode): Node {
     case '9power': {
       const operator = (value[1] as TokenNode).value.value as string
       const left = resolve(value[0])
-      const right = resolve(value[1])
+      const right = resolve(value[2])
       return new SimpleNode(operator, left, right)
     }
     case '4elem':
@@ -81,57 +81,60 @@ export function resolve(node: ParserNode): Node {
       const num = value[0] as TokenNode
       return new NumberNode(num.value.value as number)
     }
-    case '19o':
-    case '39o4': {
+    case '19o4':
+    case '21o5': {
       return resolve(value[0])
     }
     case '20empty':
-    case '40empty': {
+    case '22empty': {
       return null
     }
-    case '21d': {
+    case '23d': {
       const a = resolve(value[0])
       const b = resolve(value[2])
       const o: Record<string, Node> = {}
       let option = value[3] as ASTNode
-      while (option.producer.id !== '27empty') {
+      while (option.producer.id !== '29empty') {
         const key = (option.value[1] as TokenNode).value.value as string
-        o[key] = resolve(option.value[2]) 
+        o[key] = resolve(option.value[2])
+        option = option.value[0] as ASTNode
       }
       const kq = o.k ? 'k' : (o.q ? 'q' : null)
       const pb = o.p ? 'p' : (o.b ? 'b' : null)
       return new DNode(a, b, o.k || o.q, o.p || o.b, o.a, kq, pb)
     }
-    case '28pp':
-    case '29pb': {
+    case '30pp':
+    case '31pb': {
       const a = resolve(value[0])
       const b = resolve(value[2])
       const pb = (value[1] as TokenNode).value.value as 'p' | 'b'
       return new PNode(a, b, pb)
     }
-    case '30a': {
+    case '32a': {
       const a = resolve(value[0])
       const b = resolve(value[2])
       const o: Record<string, Node> = {}
       let option = value[3] as ASTNode
-      while (option.producer.id !== '34empty') {
+      while (option.producer.id !== '36empty') {
         const key = (option.value[1] as TokenNode).value.value as string
         o[key] = resolve(option.value[2]) 
+        option = option.value[0] as ASTNode
       }
       return new ANode(a, b, o.k, o.q, o.m)
     }
-    case '35c': {
+    case '37c': {
       const a = resolve(value[0])
       const b = resolve(value[2])
       const o: Record<string, Node> = {}
       let option = value[3] as ASTNode
-      while (option.producer.id !== '37empty') {
+      while (option.producer.id !== '39empty') {
         const key = (option.value[1] as TokenNode).value.value as string
         o[key] = resolve(option.value[2]) 
+        option = option.value[0] as ASTNode
       }
       return new CNode(a, b, o.m)
     }
-    case '38f': {
+    case '40f': {
       const a = resolve(value[0])
       const b = resolve(value[2])
       return new FNode(a, b)
