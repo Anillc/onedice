@@ -1,4 +1,4 @@
-import { Env, Flow, DiceNode, resolve } from './ast'
+import { Env, Flow, DiceNode } from './ast'
 import { parse } from './parser'
 
 export * from './ast'
@@ -10,7 +10,7 @@ interface Dice {
 }
 
 export function dice(input: string): Dice {
-  const root = resolve(parse(input))
+  const root = parse(input) as DiceNode
   const dice = (env: Env = {}, flow = []) => root.eval(getEnv(env), flow)
   Object.assign(dice, { root })
   return dice as Dice
