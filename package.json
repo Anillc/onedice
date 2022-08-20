@@ -1,5 +1,5 @@
 {
-  "name": "onedice",
+  "name": "@onedice/core",
   "version": "0.0.1",
   "description": "node implement of onedice",
   "main": "lib/index.js",

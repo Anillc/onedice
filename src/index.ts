@@ -1,18 +1,19 @@
-import { Config, Flow, DiceNode } from './ast'
+import { Config } from './ast'
 import { parse } from './parser'
 import { random } from './utils'
+import { DiceNode, Polish } from './ast/node'
 
 export * from './ast'
 export * from './parser'
 
-interface Dice {
+export interface Dice {
   root: DiceNode
-  (config?: Config, flow?: Flow[]): number
+  (config?: Config, polishes?: Polish[]): number
 }
 
 export function dice(input: string): Dice {
   const root = parse(input) as DiceNode
-  const dice = (env: Config = {}, flow = []) => root.eval(getConfig(env), flow)
+  const dice = (env: Config = {}, polishes = []) => root.eval(getConfig(env), polishes)
   Object.assign(dice, { root })
   return dice as Dice
 }

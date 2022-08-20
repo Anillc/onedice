@@ -11,6 +11,7 @@ import { PNode } from './dice/p'
 import { InterpolationNode } from './interpolation'
 import { NumberNode } from './number'
 import { SimpleNode } from './simple'
+import { DiceNode } from './node'
 
 export * from './bracket'
 export * from './simple'
@@ -20,6 +21,7 @@ export * from './dice/p'
 export * from './dice/a'
 export * from './dice/c'
 export * from './dice/f'
+export * from './node'
 
 export interface Config {
   random?: (min: number, max: number) => number
@@ -52,12 +54,6 @@ export interface Config {
     a?: number
     b?: number
   }
-}
-
-export type Flow = [string, number]
-
-export interface DiceNode {
-  eval(config: Config, flow: Flow[]): number
 }
 
 interface Options extends DiceNode {
@@ -164,7 +160,7 @@ export function resolve(producer: Producer, nodes: BufferElement[]): DiceNode {
     case 38:
     case 41: {
       let prev = nodes[0] as Options
-      if (!prev) prev = { options: {}, eval: null }
+      if (!prev) prev = { options: {} } as Options
       const name = (nodes[1] as TermToken).value
       prev.options[name] = nodes[2] as DiceNode
       return prev

@@ -1,15 +1,33 @@
-import { Config, Flow, DiceNode } from '.'
+import { Config } from '.'
 
-export class SimpleNode implements DiceNode {
+import { DiceNode, Polish } from './node'
+
+declare module '..' {
+  interface Polishes {
+    'SimpleNode': SimplePolish
+  }
+}
+
+export interface SimplePolish extends Polish {
+  operator: string
+  left: number
+  right: number
+}
+
+export class SimpleNode extends DiceNode {
+  protected polish: SimplePolish
   constructor(
     public operator: string,
     public left: DiceNode,
     public right: DiceNode,
-  ) {}
+  ) { super() }
 
-  eval(config: Config, flow: Flow[]): number {
-    const left = this.left.eval(config, flow)
-    const right = this.right.eval(config, flow)
+  protected _eval(config: Config, polishes: Polish[]): number {
+    const left = this.left.eval(config, polishes)
+    const right = this.right.eval(config, polishes)
+    Object.assign(this.polish, {
+      left, right, operator: this.operator,
+    })
     switch (this.operator) {
       case '+':
         return left + right
