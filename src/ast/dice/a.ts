@@ -1,4 +1,4 @@
-import { fill, random } from '../../utils'
+import { fill, negative, random } from '../../utils'
 import { Env, Flow, DiceNode } from '..'
 
 export class ANode implements DiceNode {
@@ -16,7 +16,10 @@ export class ANode implements DiceNode {
     const c = this.c?.eval(env, flow) ?? env.a.c
     const d = this.d?.eval(env, flow) ?? env.a.d
     const e = this.e?.eval(env, flow) ?? env.a.e
-    if (a === null || b === null) throw new Error('参数错误')
+    if (negative(a, b, c, d, e)) throw new Error('参数不能为负数')
+    if (a === null || b === null) throw new Error('参数错误： AaBkCqDmE 中 A, B 是必须的')
+    if (b < 2) throw new Error('参数错误: AaBkCqDmE 中 B 不能小于 2')
+    if (e < 1) throw new Error('参数错误: AaBkCqDmE 中 E 不能小于 1')
     
     let count = a
     const roll = []
@@ -26,8 +29,8 @@ export class ANode implements DiceNode {
       roll.push(...r)
     }
     const result = roll.filter(e => {
-      if (c && e < c) return false
-      if (d && e > d) return false
+      if (c !== null && e < c) return false
+      if (d !== null && e > d) return false
       return true
     }).length
     flow.push([this.string(a, b, c, d, e), result])

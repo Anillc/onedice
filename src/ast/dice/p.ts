@@ -1,4 +1,4 @@
-import { fill, random } from '../../utils'
+import { fill, negative, random } from '../../utils'
 import { Env, Flow, DiceNode } from '..'
 
 export class PNode implements DiceNode {
@@ -7,12 +7,17 @@ export class PNode implements DiceNode {
   eval(env: Env, flow: Flow[]): number {
     const a = this.a?.eval(env, flow) ?? env.p.a
     const b = this.b?.eval(env, flow) ?? env.p.b
-    const one = random(1, 10)
+    if (negative(a, b)) throw new Error('参数不能为负数')
+
+    const one = random(0, 9)
     const ten = random(0, 9)
-    const roll = fill(b + 1).map(_ => random(1, 10)).concat(ten)
-    const result = this.pb === 'p'
-      ? Math.max(...roll) * 10 + one
-      : Math.min(...roll) * 10 + one
+    const roll = fill(b).map(_ => random(0, 9)).concat(ten)
+    const realTen = this.pb === 'p'
+      ? Math.max(...roll)
+      : Math.min(...roll)
+    const result = one === 0
+      ? (realTen + 1) * 10 + one
+      : realTen * 10 + one
     flow.push([this.string(a, b), result])
     return result
   }

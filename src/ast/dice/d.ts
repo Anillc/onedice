@@ -1,5 +1,5 @@
 import { dice } from '../..'
-import { fill, random, sum } from '../../utils'
+import { fill, negative, random, sum } from '../../utils'
 import { Env, Flow, DiceNode } from '..'
 
 export class DNode implements DiceNode {
@@ -19,6 +19,8 @@ export class DNode implements DiceNode {
     const c = this.c?.eval(env, flow) ?? env.d.c ?? a
     const d = this.d?.eval(env, flow) ?? env.d.d
     const e = this.e?.eval(env, flow) ?? env.d.e
+    if (negative(a, b, c, d, e)) throw new Error('参数不能为负数')
+    if (b < 1) throw new Error('参数错误: AdB(kq)C(pb)DaE 中 B 不能小于 1')
     
     let res: number
     if (e !== null) {
@@ -30,10 +32,10 @@ export class DNode implements DiceNode {
       roll.sort()
       switch (this.kq || this.pb) {
         case 'k':
-          roll.splice(0, b - c)
+          roll.splice(0, b - c + 1)
           break
         case 'q':
-          roll.splice(- (b - c))
+          roll.splice(c)
           break
         case 'p':
         case 'b':

@@ -1,4 +1,4 @@
-import { fill, random, sum } from '../../utils'
+import { fill, negative, random, sum } from '../../utils'
 import { Env, Flow, DiceNode } from '..'
 
 export class FNode implements DiceNode {
@@ -10,6 +10,8 @@ export class FNode implements DiceNode {
   eval(env: Env, flow: Flow[]): number {
     const a = this.a?.eval(env, flow) ?? env.f.a
     const b = this.b?.eval(env, flow) ?? env.f.b
+    if (negative(a, b)) throw new Error('参数不能为负数')
+
     const op = [1, -1, 0]
     const result = sum(fill(a).map(_ => op[random(0, 2)]))
     flow.push([this.string(a, b), result])

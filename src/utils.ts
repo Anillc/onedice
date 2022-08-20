@@ -3,9 +3,13 @@ export function random(min: number, max: number) {
 }
 
 export function sum(nums: number[]) {
-  return nums.reduce((acc, x) => acc + x)
+  return nums.reduce((acc, x) => acc + x, 0)
 }
 
 export function fill(size: number) {
   return new Array(size).fill(0)
+}
+
+export function negative(...nums: number[]) {
+  return nums.find(num => num < 0) !== undefined
 }

@@ -1,4 +1,4 @@
-import { fill, random } from '../../utils'
+import { fill, negative, random } from '../../utils'
 import { Env, Flow, DiceNode } from '..'
 
 export class CNode implements DiceNode {
@@ -12,7 +12,10 @@ export class CNode implements DiceNode {
     const a = this.a?.eval(env, flow) ?? env.c.a
     const b = this.b?.eval(env, flow) ?? env.c.b
     const c = this.c?.eval(env, flow) ?? env.c.c
-    if (!a || !b) throw new Error('参数错误')
+    if (negative(a, b, c)) throw new Error('参数不能为负数')
+    if (a === null || b === null) throw new Error('参数错误: 参数错误： AcBmC 中 A, B 是必须的')
+    if (b < 2) throw new Error('参数错误: AcBmC 中 B 不能小于 2')
+    if (c < 1) throw new Error('参数错误: AcBmC 中 C 不能小于 1')
 
     let count = a
     let roll: number[]
