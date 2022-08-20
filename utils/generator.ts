@@ -5,7 +5,7 @@ import uniqWith from 'lodash.uniqwith'
 import groupBy from 'lodash.groupby'
 
 interface Producer {
-  id: string
+  id: number
   name: string
   tokens: string[]
 }
@@ -25,8 +25,8 @@ interface Itemset {
 const g = load(readFileSync(resolve(__dirname, './grammar.yaml'), 'utf-8')) as any
 
 let terms: string[] = []
-let shiftList: string[] = []
-let reduceList: string[] = []
+let shiftList: number[] = []
+let reduceList: number[] = []
 const grammars: Record<string, Producer[]> = {}
 
 for (const [key, value] of Object.entries(g)) {
@@ -35,17 +35,17 @@ for (const [key, value] of Object.entries(g)) {
     continue
   }
   if (key === 'shift') {
-    shiftList = (value as string).split(' ')
+    shiftList = value as number[]
     continue
   }
   if (key === 'reduce') {
-    reduceList = (value as string).split(' ')
+    reduceList = value as number[]
     continue
   }
   const producers: string[] = Array.isArray(value) ? value : [value]
   grammars[key] = producers.map(producer => {
     const [id, ...tokens] = producer.split(/\s+/)
-    return { name: key, id, tokens }
+    return { name: key, id: +id, tokens }
   })
 }
 
@@ -169,17 +169,21 @@ function cluster() {
   return itemsets
 }
 
+enum ActionType {
+  shift, reduce, goto
+}
+
 interface Action {
-  type: 'shift' | 'reduce' | 'goto'
-  target: string
+  t: ActionType // type
+  d: number     // target
 }
 
 function actionWrite(origin: Action, action: Action, item: Item) {
   if (action === origin) return false
-  if(action.type === origin.type && action.target === origin.target) return false
-  if (action.type === 'shift' && origin.type === 'reduce'
+  if(action.t === origin.t && action.d === origin.d) return false
+  if (action.t === ActionType.shift && origin.t === ActionType.reduce
     && shiftList.includes(item.producer.id)) return true
-  if (action.type === 'reduce' && origin.type === 'shift'
+  if (action.t === ActionType.reduce && origin.t === ActionType.shift
     && reduceList.includes(item.producer.id)) return true
   throw new Error('conflict')
 }
@@ -203,19 +207,19 @@ clst.forEach(itemset => {
     if (item.position === item.producer.tokens.length || item.producer.tokens[0] === 'empty') {
       const origin = states[item.forward]
       const action: Action = {
-        type: 'reduce',
-        target: item.producer.id
+        t: ActionType.reduce,
+        d: item.producer.id
       }
       if (!origin || actionWrite(origin, action, item)) {
         states[item.forward] = action
       }
     } else {
       const token = item.producer.tokens[item.position]
-      const target = String(itemset.next[token])
+      const target = itemset.next[token]
       const origin = states[token]
       const action: Action = terms.includes(token)
-        ? { type: 'shift', target }
-        : { type: 'goto', target }
+        ? { t: ActionType.shift, d: target }
+        : { t: ActionType.goto, d: target }
       if (!origin || actionWrite(origin, action, item)) {
         states[token] = action
       }

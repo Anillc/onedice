@@ -1,70 +1,70 @@
 term: + - * x / ^ ( ) d k q p b a m c f num
-shift: 26dop 27dob 28doa
-reduce: ''
+shift: [26, 27, 28]
+reduce: []
 
-G: 1g         E1
+G: 1          E1
 
 E1:
-- 2add        E1 + E2
-- 3sub        E1 - E2
-- 4elem       E2
+- 2           E1 + E2
+- 3           E1 - E2
+- 4           E2
 
 E2:
-- 5mul1       E2 * E3
-- 6mul2       E2 x E3
-- 7div        E2 / E3
-- 8elem       E3
+- 5           E2 * E3
+- 6           E2 x E3
+- 7           E2 / E3
+- 8           E3
 
 E3:
-- 9power      E3 ^ E4
-- 10elem      E4
+- 9           E3 ^ E4
+- 10          E4
 
 E4:
-- 11d         D
-- 12p         P
-- 13a         A
-- 14c         C
-- 15f         F
-- 16elem      E5
+- 11          D
+- 12          P
+- 13          A
+- 14          C
+- 15          F
+- 16          E5
 
 E5:
-- 17brac      ( E1 )
-- 18num       num
+- 17          ( E1 )
+- 18          num
 
 O4:
-- 19o4        E4
-- 20empty     empty
+- 19          E4
+- 20          empty
 
 O5:
-- 21o5        E5
-- 22empty     empty
+- 21          E5
+- 22          empty
 
-D: 23d        O4 d O5 DO
+D: 23         O4 d O5 DO
 
 DO:
-- 24dok       DO k O5
-- 25doq       DO q O5
-- 26dop       DO p O5
-- 27dob       DO b O5
-- 28doa       DO a O5
-- 29empty     empty
+- 24          DO k O5
+- 25          DO q O5
+- 26          DO p O5
+- 27          DO b O5
+- 28          DO a O5
+- 29          empty
 
 P:
-- 30pp        O4 p O5
-- 31pb        O4 b O5
+- 30          O4 p O5
+- 31          O4 b O5
 
-A: 32a        O4 a O5 AO
+A: 32         O4 a O5 AO
 
 AO:
-- 33aok       AO k O5
-- 34aoq       AO q O5
-- 35aom       AO m O5
-- 36empty     empty
+- 33          AO k O5
+- 34          AO q O5
+- 35          AO m O5
+- 36          empty
 
-C: 37c        O4 c O5 CO
+C: 37         O4 c O5 CO
 
 CO:
-- 38com       CO m O5
-- 39empty     empty
+- 38          CO m O5
+- 39          empty
 
-F: 40f        O4 f O5
+F: 40         O4 f O5

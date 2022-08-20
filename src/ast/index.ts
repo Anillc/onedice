@@ -59,52 +59,52 @@ interface Options extends DiceNode {
 
 export function resolve(producer: Producer, nodes: BufferElement[]): DiceNode {
   switch (producer.id) {
-    case '1g': {
+    case 1: {
       return nodes[0] as DiceNode
     }
-    case '2add':
-    case '3sub':
-    case '5mul1':
-    case '6mul2':
-    case '7div':
-    case '9power': {
+    case 2:
+    case 3:
+    case 5:
+    case 6:
+    case 7:
+    case 9: {
       const operator = (nodes[1] as Token).value as string
       const left = nodes[0] as DiceNode
       const right = nodes[2] as DiceNode
       return new SimpleNode(operator, left, right)
     }
-    case '4elem':
-    case '8elem':
-    case '10elem':
-    case '16elem': {
+    case 4:
+    case 8:
+    case 10:
+    case 16: {
       return nodes[0] as DiceNode
     }
-    case '11d':
-    case '12p':
-    case '13a':
-    case '14c':
-    case '15f': {
+    case 11:
+    case 12:
+    case 13:
+    case 14:
+    case 15: {
       return nodes[0] as DiceNode
     }
-    case '17brac': {
+    case 17: {
       return new BracketNode(nodes[1] as DiceNode)
     }
-    case '18num': {
+    case 18: {
       const num = nodes[0] as Token
       return new NumberNode(num.value as number)
     }
-    case '19o4':
-    case '21o5': {
+    case 19:
+    case 21: {
       return nodes[0] as DiceNode
     }
-    case '20empty':
-    case '22empty':
-    case '29empty':
-    case '36empty':
-    case '39empty': {
+    case 20:
+    case 22:
+    case 29:
+    case 36:
+    case 39: {
       return null
     }
-    case '23d': {
+    case 23: {
       const a = nodes[0] as DiceNode
       const b = nodes[2] as DiceNode
       const o = (nodes[3] as Options)?.options || {}
@@ -112,39 +112,39 @@ export function resolve(producer: Producer, nodes: BufferElement[]): DiceNode {
       const pb = o.p ? 'p' : (o.b ? 'b' : null)
       return new DNode(a, b, o.k || o.q, o.p || o.b, o.a, kq, pb)
     }
-    case '30pp':
-    case '31pb': {
+    case 30:
+    case 31: {
       const a = nodes[0] as DiceNode
       const b = nodes[2] as DiceNode
       const pb = (nodes[1] as Token).value as 'p' | 'b'
       return new PNode(a, b, pb)
     }
-    case '32a': {
+    case 32: {
       const a = nodes[0] as DiceNode
       const b = nodes[2] as DiceNode
       const o = (nodes[3] as Options)?.options || {}
       return new ANode(a, b, o.k, o.q, o.m)
     }
-    case '37c': {
+    case 37: {
       const a = nodes[0] as DiceNode
       const b = nodes[2] as DiceNode
       const o = (nodes[3] as Options)?.options || {}
       return new CNode(a, b, o.m)
     }
-    case '40f': {
+    case 40: {
       const a = nodes[0] as DiceNode
       const b = nodes[2] as DiceNode
       return new FNode(a, b)
     }
-    case '24dok':
-    case '25doq':
-    case '26dop':
-    case '27dob':
-    case '28doa':
-    case '33aok':
-    case '34aoq':
-    case '35aom':
-    case '38com': {
+    case 24:
+    case 25:
+    case 26:
+    case 27:
+    case 28:
+    case 33:
+    case 34:
+    case 35:
+    case 38: {
       let prev = nodes[0] as Options
       if (!prev) prev = { options: {}, eval: null }
       const name = (nodes[1] as Token).value as string

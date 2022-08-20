@@ -5,16 +5,20 @@ import { lexer, Token } from './lexer'
 import { DiceNode, resolve } from '../ast'
 
 export interface Producer {
-  id: string
+  id: number
   name: string
   tokens: string[]
 }
 
 export type BufferElement = Token | DiceNode
 
+enum ActionType {
+  shift, reduce, goto
+}
+
 interface Action {
-  type: 'shift' | 'reduce' | 'goto'
-  target: string
+  t: ActionType // type
+  d: string     // target
 }
 
 const producers: Record<string, Producer> = {}
@@ -32,14 +36,14 @@ export function parse(input: string) {
     const state = stack[stack.length - 1]
     const action: Action = table[state][token.type === 'number' ? 'num' : token.value]
     if (!action) throw new Error('parsing error')
-    switch (action.type) {
-      case 'shift':
-        stack.push(action.target)
+    switch (action.t) {
+      case ActionType.shift:
+        stack.push(action.d)
         buffer.push(token)
         token = null
         break
-      case 'reduce':
-        const id = action.target
+      case ActionType.reduce:
+        const id = action.d
         const producer = producers[id]
         const { name, tokens } = producer
         const nodes: BufferElement[] = []
@@ -55,7 +59,7 @@ export function parse(input: string) {
         }
         const next: Action = table[stack[stack.length - 1]][name]
         if (!next) throw new Error('parsing error')
-        stack.push(next.target)
+        stack.push(next.d)
         break
     }
   }
