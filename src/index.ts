@@ -1,42 +1,47 @@
-import { Env, Flow, DiceNode } from './ast'
+import { Config, Flow, DiceNode } from './ast'
 import { parse } from './parser'
+import { random } from './utils'
 
 export * from './ast'
 export * from './parser'
 
 interface Dice {
   root: DiceNode
-  (env?: Env, flow?: Flow[]): number
+  (config?: Config, flow?: Flow[]): number
 }
 
 export function dice(input: string): Dice {
   const root = parse(input) as DiceNode
-  const dice = (env: Env = {}, flow = []) => root.eval(getEnv(env), flow)
+  const dice = (env: Config = {}, flow = []) => root.eval(getConfig(env), flow)
   Object.assign(dice, { root })
   return dice as Dice
 }
 
-function getEnv(env: Env = {}) {
+function getConfig(config: Config = {}): Config {
   return {
+    random,
+    maxRollCount: 10000,
+    env: {},
+    ...config,
     d: {
       a: 1, b: 100, c: null, d: 0, e: null,
-      ...env.d
+      ...config.d
     },
     p: {
       a: null, b: 1,
-      ...env.p
+      ...config.p
     },
     a: {
       a: null, b: null, c: 8, d: null, e: 10,
-      ...env.a
+      ...config.a
     },
     c: {
       a: null, b: null, c: 10,
-      ...env.c
+      ...config.c
     },
     f: {
       a: 4, b: 3,
-      ...env.f
+      ...config.f
     },
   }
 }

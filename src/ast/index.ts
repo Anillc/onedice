@@ -17,7 +17,10 @@ export * from './dice/a'
 export * from './dice/c'
 export * from './dice/f'
 
-export interface Env {
+export interface Config {
+  random?: (min: number, max: number) => number
+  maxRollCount?: number
+  env?: Record<string, string>
   d?: {
     a?: number
     b?: number
@@ -50,7 +53,7 @@ export interface Env {
 export type Flow = [string, number]
 
 export interface DiceNode {
-  eval(env: Env, flow: Flow[]): number
+  eval(env: Config, flow: Flow[]): number
 }
 
 interface Options extends DiceNode {

@@ -1,4 +1,4 @@
-import { Env, Flow, DiceNode } from '.'
+import { Config, Flow, DiceNode } from '.'
 
 export class SimpleNode implements DiceNode {
   constructor(
@@ -7,9 +7,9 @@ export class SimpleNode implements DiceNode {
     public right: DiceNode,
   ) {}
 
-  eval(env: Env, flow: Flow[]): number {
-    const left = this.left.eval(env, flow)
-    const right = this.right.eval(env, flow)
+  eval(config: Config, flow: Flow[]): number {
+    const left = this.left.eval(config, flow)
+    const right = this.right.eval(config, flow)
     switch (this.operator) {
       case '+':
         return left + right

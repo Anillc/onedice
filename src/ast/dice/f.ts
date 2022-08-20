@@ -1,5 +1,5 @@
-import { fill, negative, random, sum } from '../../utils'
-import { Env, Flow, DiceNode } from '..'
+import { fill, negative, sum } from '../../utils'
+import { Config, Flow, DiceNode } from '..'
 
 export class FNode implements DiceNode {
   constructor(
@@ -7,13 +7,14 @@ export class FNode implements DiceNode {
     public b: DiceNode,
   ) {}
 
-  eval(env: Env, flow: Flow[]): number {
-    const a = this.a?.eval(env, flow) ?? env.f.a
-    const b = this.b?.eval(env, flow) ?? env.f.b
+  eval(config: Config, flow: Flow[]): number {
+    const a = this.a?.eval(config, flow) ?? config.f.a
+    const b = this.b?.eval(config, flow) ?? config.f.b
     if (negative(a, b)) throw new Error('参数不能为负数')
+    if (a > config.maxRollCount) throw new Error('掷出骰子过多')
 
     const op = [1, -1, 0]
-    const result = sum(fill(a).map(_ => op[random(0, 2)]))
+    const result = sum(fill(a).map(_ => op[config.random(0, 2)]))
     flow.push([this.string(a, b), result])
     return result
   }

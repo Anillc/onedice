@@ -1,9 +1,9 @@
-import { Env, Flow, DiceNode } from '.'
+import { Config, Flow, DiceNode } from '.'
 
 export class BracketNode implements DiceNode {
   constructor(public inner: DiceNode) {}
 
-  eval(env: Env, flow: Flow[]): number {
-    return this.inner.eval(env, flow)
+  eval(config: Config, flow: Flow[]): number {
+    return this.inner.eval(config, flow)
   }
 }

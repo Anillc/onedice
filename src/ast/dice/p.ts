@@ -1,17 +1,18 @@
-import { fill, negative, random } from '../../utils'
-import { Env, Flow, DiceNode } from '..'
+import { fill, negative } from '../../utils'
+import { Config, Flow, DiceNode } from '..'
 
 export class PNode implements DiceNode {
   constructor(public a: DiceNode, public b: DiceNode, public pb: 'p' | 'b') {}
 
-  eval(env: Env, flow: Flow[]): number {
-    const a = this.a?.eval(env, flow) ?? env.p.a
-    const b = this.b?.eval(env, flow) ?? env.p.b
+  eval(config: Config, flow: Flow[]): number {
+    const a = this.a?.eval(config, flow) ?? config.p.a
+    const b = this.b?.eval(config, flow) ?? config.p.b
     if (negative(a, b)) throw new Error('参数不能为负数')
+    if (b + 2 > config.maxRollCount) throw new Error('掷出骰子过多')
 
-    const one = random(0, 9)
-    const ten = random(0, 9)
-    const roll = fill(b).map(_ => random(0, 9)).concat(ten)
+    const one = config.random(0, 9)
+    const ten = config.random(0, 9)
+    const roll = fill(b).map(_ => config.random(0, 9)).concat(ten)
     const realTen = this.pb === 'p'
       ? Math.max(...roll)
       : Math.min(...roll)

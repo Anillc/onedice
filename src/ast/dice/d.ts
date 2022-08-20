@@ -1,6 +1,6 @@
 import { dice } from '../..'
-import { fill, negative, random, sum } from '../../utils'
-import { Env, Flow, DiceNode } from '..'
+import { fill, negative, sum } from '../../utils'
+import { Config, Flow, DiceNode } from '..'
 
 export class DNode implements DiceNode {
   constructor(
@@ -13,12 +13,12 @@ export class DNode implements DiceNode {
     public pb: 'p' | 'b',
   ) {}
 
-  eval(env: Env, flow: Flow[]): number {
-    const a = this.a?.eval(env, flow) ?? env.d.a
-    const b = this.b?.eval(env, flow) ?? env.d.b
-    const c = this.c?.eval(env, flow) ?? env.d.c ?? a
-    const d = this.d?.eval(env, flow) ?? env.d.d
-    const e = this.e?.eval(env, flow) ?? env.d.e
+  eval(config: Config, flow: Flow[]): number {
+    const a = this.a?.eval(config, flow) ?? config.d.a
+    const b = this.b?.eval(config, flow) ?? config.d.b
+    const c = this.c?.eval(config, flow) ?? config.d.c ?? a
+    const d = this.d?.eval(config, flow) ?? config.d.d
+    const e = this.e?.eval(config, flow) ?? config.d.e
     if (negative(a, b, c, d, e)) throw new Error('参数不能为负数')
     if (b < 1) throw new Error('参数错误: AdB(kq)C(pb)DaE 中 B 不能小于 1')
     
@@ -28,7 +28,11 @@ export class DNode implements DiceNode {
     } else {
       if (this.kq && this.pb) throw new Error('k/q 与 p/b 不可同时使用')
       if (this.kq && c > b) throw new Error('选取骰子个数大于骰子个数')
-      let roll = fill(a).map(_ => random(1, b))
+      const rollCount = this.pb
+        ? a * d
+        : a
+      if (rollCount > config.maxRollCount) throw new Error('掷出骰子过多')
+      let roll = fill(a).map(_ => config.random(1, b))
       roll.sort()
       switch (this.kq || this.pb) {
         case 'k':
