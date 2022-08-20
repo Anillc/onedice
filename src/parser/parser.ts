@@ -32,8 +32,8 @@ export function parse(input: string) {
   while (true) {
     if (!token) token = next()
     const state = stack[stack.length - 1]
-    const action: Action = table[state][token.type === 'number' ? 'num' : token.value]
-    if (!action) throw new Error('parsing error')
+    const action: Action = table[state][token.name === 'term' ? token.value : token.name]
+    if (!action) throw new Error('语法错误')
     switch (action[0]) {
       case ActionType.shift:
         stack.push(action[1])
@@ -56,7 +56,7 @@ export function parse(input: string) {
           return buffer.pop()
         }
         const next: Action = table[stack[stack.length - 1]][name]
-        if (!next) throw new Error('parsing error')
+        if (!next) throw new Error('语法错误')
         stack.push(next[1])
         break
     }
