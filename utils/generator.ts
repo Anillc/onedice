@@ -169,6 +169,41 @@ function cluster() {
   return itemsets
 }
 
+function lalrItemEqual(a: Item, b: Item) {
+  return a.producer.id === b.producer.id && a.position === b.position
+}
+
+function lalrItemsEqual(a: Item[], b: Item[]) {
+  if (a.length !== b.length) return false
+  a.sort((a, b) => Number(
+    `${a.producer.id}${a.position}${a.forward}` > `${b.producer.id}${b.position}${b.forward}`))
+  for (let i = 0; i < a.length; i++) {
+    if (!lalrItemEqual(a[i], b[i])) return false
+  }
+  return true
+}
+
+function toLALR(itemsets: Itemset[]) {
+  const copy = JSON.parse(JSON.stringify(itemsets)) as Itemset[]
+  const lalr: Itemset[] = []
+  for (const itemset of copy) {
+    const origin = lalr.find(e => lalrItemsEqual(e.items, itemset.items))
+    if (!origin) {
+      lalr.push(itemset)
+      continue
+    }
+    origin.items = uniqWith(origin.items.concat(...itemset.items), itemEqual)
+    for (const each of copy) {
+      for (const [token, target] of Object.entries(each.next)) {
+        if (target === itemset.id) {
+          each.next[token] = origin.id
+        }
+      }
+    }
+  }
+  return lalr
+}
+
 enum ActionType {
   shift, reduce, goto
 }
@@ -188,7 +223,7 @@ function actionWrite(origin: Action, action: Action, item: Item) {
   throw new Error('conflict')
 }
 
-const clst = cluster()
+const clst = toLALR(cluster())
 
 const action: Record<string, Record<string, Action>> = {}
 
