@@ -1,11 +1,11 @@
-import { Env, Flow, Node, resolve } from './ast'
+import { Env, Flow, DiceNode, resolve } from './ast'
 import { parse } from './parser'
 
 export * from './ast'
 export * from './parser'
 
 interface Dice {
-  root: Node
+  root: DiceNode
   (env?: Env, flow?: Flow[]): number
 }
 

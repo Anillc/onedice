@@ -1,10 +1,10 @@
 import { fill, random, sum } from '../../utils'
-import { Env, Flow, Node } from '..'
+import { Env, Flow, DiceNode } from '..'
 
-export class FNode implements Node {
+export class FNode implements DiceNode {
   constructor(
-    public a: Node,
-    public b: Node,
+    public a: DiceNode,
+    public b: DiceNode,
   ) {}
 
   eval(env: Env, flow: Flow[]): number {

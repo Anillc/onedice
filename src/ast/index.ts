@@ -48,11 +48,11 @@ export interface Env {
 
 export type Flow = [string, number]
 
-export interface Node {
+export interface DiceNode {
   eval(env: Env, flow: Flow[]): number
 }
 
-export function resolve(node: ParserNode): Node {
+export function resolve(node: ParserNode): DiceNode {
   const { producer, value } = node as ASTNode
   switch (producer.id) {
     case '1g': {
@@ -100,7 +100,7 @@ export function resolve(node: ParserNode): Node {
     case '23d': {
       const a = resolve(value[0])
       const b = resolve(value[2])
-      const o: Record<string, Node> = {}
+      const o: Record<string, DiceNode> = {}
       let option = value[3] as ASTNode
       while (option.producer.id !== '29empty') {
         const key = (option.value[1] as TokenNode).value.value as string
@@ -121,7 +121,7 @@ export function resolve(node: ParserNode): Node {
     case '32a': {
       const a = resolve(value[0])
       const b = resolve(value[2])
-      const o: Record<string, Node> = {}
+      const o: Record<string, DiceNode> = {}
       let option = value[3] as ASTNode
       while (option.producer.id !== '36empty') {
         const key = (option.value[1] as TokenNode).value.value as string
@@ -133,7 +133,7 @@ export function resolve(node: ParserNode): Node {
     case '37c': {
       const a = resolve(value[0])
       const b = resolve(value[2])
-      const o: Record<string, Node> = {}
+      const o: Record<string, DiceNode> = {}
       let option = value[3] as ASTNode
       while (option.producer.id !== '39empty') {
         const key = (option.value[1] as TokenNode).value.value as string

@@ -1,6 +1,6 @@
-import { Env, Flow, Node } from '.'
+import { Env, Flow, DiceNode } from '.'
 
-export class NumberNode implements Node {
+export class NumberNode implements DiceNode {
   constructor(public num: number) {}
 
   eval(env: Env, flow: Flow[]): number {

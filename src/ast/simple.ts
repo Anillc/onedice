@@ -1,10 +1,10 @@
-import { Env, Flow, Node } from '.'
+import { Env, Flow, DiceNode } from '.'
 
-export class SimpleNode implements Node {
+export class SimpleNode implements DiceNode {
   constructor(
     public operator: string,
-    public left: Node,
-    public right: Node,
+    public left: DiceNode,
+    public right: DiceNode,
   ) {}
 
   eval(env: Env, flow: Flow[]): number {

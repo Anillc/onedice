@@ -1,8 +1,8 @@
 import { fill, random } from '../../utils'
-import { Env, Flow, Node } from '..'
+import { Env, Flow, DiceNode } from '..'
 
-export class PNode implements Node {
-  constructor(public a: Node, public b: Node, public pb: 'p' | 'b') {}
+export class PNode implements DiceNode {
+  constructor(public a: DiceNode, public b: DiceNode, public pb: 'p' | 'b') {}
 
   eval(env: Env, flow: Flow[]): number {
     const a = this.a?.eval(env, flow) ?? env.p.a

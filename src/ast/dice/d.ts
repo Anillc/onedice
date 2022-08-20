@@ -1,14 +1,14 @@
 import { dice } from '../..'
 import { fill, random, sum } from '../../utils'
-import { Env, Flow, Node } from '..'
+import { Env, Flow, DiceNode } from '..'
 
-export class DNode implements Node {
+export class DNode implements DiceNode {
   constructor(
-    public a: Node,
-    public b: Node,
-    public c: Node,
-    public d: Node,
-    public e: Node,
+    public a: DiceNode,
+    public b: DiceNode,
+    public c: DiceNode,
+    public d: DiceNode,
+    public e: DiceNode,
     public kq: 'k' | 'q',
     public pb: 'p' | 'b',
   ) {}
