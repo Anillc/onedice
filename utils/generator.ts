@@ -208,17 +208,15 @@ enum ActionType {
   shift, reduce, goto
 }
 
-interface Action {
-  t: ActionType // type
-  d: number     // target
-}
+// [type, target]
+type Action = [ActionType, number]
 
 function actionWrite(origin: Action, action: Action, item: Item) {
   if (action === origin) return false
-  if(action.t === origin.t && action.d === origin.d) return false
-  if (action.t === ActionType.shift && origin.t === ActionType.reduce
+  if(action[0] === origin[0] && action[1] === origin[1]) return false
+  if (action[0] === ActionType.shift && origin[0] === ActionType.reduce
     && shiftList.includes(item.producer.id)) return true
-  if (action.t === ActionType.reduce && origin.t === ActionType.shift
+  if (action[0] === ActionType.reduce && origin[0] === ActionType.shift
     && reduceList.includes(item.producer.id)) return true
   throw new Error('conflict')
 }
@@ -241,10 +239,7 @@ clst.forEach(itemset => {
   itemset.items.forEach(item => {
     if (item.position === item.producer.tokens.length || item.producer.tokens[0] === 'empty') {
       const origin = states[item.forward]
-      const action: Action = {
-        t: ActionType.reduce,
-        d: item.producer.id
-      }
+      const action: Action = [ActionType.reduce, item.producer.id ]
       if (!origin || actionWrite(origin, action, item)) {
         states[item.forward] = action
       }
@@ -253,8 +248,8 @@ clst.forEach(itemset => {
       const target = itemset.next[token]
       const origin = states[token]
       const action: Action = terms.includes(token)
-        ? { t: ActionType.shift, d: target }
-        : { t: ActionType.goto, d: target }
+        ? [ActionType.shift, target]
+        : [ActionType.goto, target ]
       if (!origin || actionWrite(origin, action, item)) {
         states[token] = action
       }

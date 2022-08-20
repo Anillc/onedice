@@ -16,10 +16,8 @@ enum ActionType {
   shift, reduce, goto
 }
 
-interface Action {
-  t: ActionType // type
-  d: string     // target
-}
+// [type, target]
+type Action = [ActionType, number]
 
 const producers: Record<string, Producer> = {}
 
@@ -28,7 +26,7 @@ Object.values(grammars).flat()
 
 export function parse(input: string) {
   const next = lexer(input)
-  const stack = ['1']
+  const stack = [1]
   const buffer: BufferElement[] = []
   let token: Token
   while (true) {
@@ -36,14 +34,14 @@ export function parse(input: string) {
     const state = stack[stack.length - 1]
     const action: Action = table[state][token.type === 'number' ? 'num' : token.value]
     if (!action) throw new Error('parsing error')
-    switch (action.t) {
+    switch (action[0]) {
       case ActionType.shift:
-        stack.push(action.d)
+        stack.push(action[1])
         buffer.push(token)
         token = null
         break
       case ActionType.reduce:
-        const id = action.d
+        const id = action[1]
         const producer = producers[id]
         const { name, tokens } = producer
         const nodes: BufferElement[] = []
@@ -59,7 +57,7 @@ export function parse(input: string) {
         }
         const next: Action = table[stack[stack.length - 1]][name]
         if (!next) throw new Error('parsing error')
-        stack.push(next.d)
+        stack.push(next[1])
         break
     }
   }
