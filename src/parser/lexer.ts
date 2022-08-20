@@ -1,18 +1,24 @@
 import { terms } from './grammar.json'
 
-export type Token = {
+export interface NumberToken {
   name: 'num'
   value: number
-} | {
-  name: 'int' // interpolation
+}
+
+export interface InterpolationToken {
+  name: 'int'
   value: string
-} | {
+}
+
+export interface TermToken {
   name: 'term'
   value: string
 }
 
+export type Token = NumberToken | InterpolationToken | TermToken
+
 export function lexer(input: string) {
-  const match = input.matchAll(/(\d+(\.\d+)?)|{(.+)}|(\S)/g)
+  const match = input.matchAll(/(\d+(\.\d+)?)|{([^}]+)}|(\S)/g)
   return function next(): Token {
     const next = match.next()
     if (next.done) return { name: 'term', value: '$' }
