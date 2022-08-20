@@ -1,28 +1,27 @@
-import { dice } from '..'
-import { Config } from '.'
-import { DiceNode, Polish } from './node'
+import { Config, dice } from '..'
+import { DiceNode } from '.'
 
-declare module '..' {
-  interface Polishes {
-    'InterpolationNode': InterpolationPolish
-  }
-}
-
-export interface InterpolationPolish extends Polish {
+export interface InterpolationEvaluation {
   input: string
+  inputEvaluation: unknown
+  value: number
 }
 
-export class InterpolationNode extends DiceNode {
-  protected polish: InterpolationPolish
-  constructor(public key: string) { super() }
+export class InterpolationNode implements DiceNode<InterpolationEvaluation> {
+  evaluation: InterpolationEvaluation
+  constructor(public key: string) {}
 
-  protected _eval(config: Config, polishes: Polish[]): number {
+  eval(config: Config): number {
     const input = config.env[this.key]
     if (!input) throw new Error(`没有名为 ${this.key} 的表达式`)
-    this.polish.input = input
-    return dice(input)({
+    const [value, node] = dice(input, {
       env: {}, // avoid infinite recursion
       ...config,
-    }, polishes)
+    })
+    this.evaluation = {
+      input, value,
+      inputEvaluation: node.evaluation,
+    }
+    return value
   }
 }

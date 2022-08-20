@@ -1,47 +1,48 @@
-import { Config } from '.'
+import { Config } from '..'
+import { DiceNode } from '.'
 
-import { DiceNode, Polish } from './node'
-
-declare module '..' {
-  interface Polishes {
-    'SimpleNode': SimplePolish
-  }
-}
-
-export interface SimplePolish extends Polish {
+export interface SimpleEvaluation {
   operator: string
   left: number
   right: number
+  value: number
 }
 
-export class SimpleNode extends DiceNode {
-  protected polish: SimplePolish
+export class SimpleNode implements DiceNode<SimpleEvaluation> {
+  evaluation: SimpleEvaluation
   constructor(
     public operator: string,
     public left: DiceNode,
     public right: DiceNode,
-  ) { super() }
+  ) {}
 
-  protected _eval(config: Config, polishes: Polish[]): number {
-    const left = this.left.eval(config, polishes)
-    const right = this.right.eval(config, polishes)
-    Object.assign(this.polish, {
-      left, right, operator: this.operator,
-    })
+  eval(config: Config): number {
+    const left = this.left.eval(config)
+    const right = this.right.eval(config)
+    let value: number
     switch (this.operator) {
       case '+':
-        return left + right
+        value = left + right
+        break
       case '-':
-        return left - right
+        value = left - right
+        break
       case '*':
       case 'x':
-        return left * right
+        value = left * right
+        break
       case '/':
-        return left / right
+        value = left / right
+        break
       case '^':
-        return Math.pow(left, right)
+        value = Math.pow(left, right)
+        break
       default:
-        throw new Error('unknown operator')
+        throw new Error('未知运算符')
     }
+    this.evaluation = {
+      left, right, operator: this.operator, value
+    }
+    return value
   }
 }

@@ -1,16 +1,16 @@
-import { Config } from '.'
-import { DiceNode, Polish } from './node'
+import { Config } from '..'
+import { DiceNode } from '.'
 
-declare module '..' {
-  interface Polishes {
-    'NumberNode': Polish
-  }
+interface NumberEvaluation {
+  value: number
 }
 
-export class NumberNode extends DiceNode {
-  constructor(public num: number) { super() }
+export class NumberNode implements DiceNode<NumberEvaluation> {
+  evaluation: NumberEvaluation
+  constructor(public num: number) {}
 
-  protected _eval(config: Config, polishes: Polish[]): number {
+  eval(config: Config): number {
+    this.evaluation = { value: this.num }
     return this.num
   }
 }

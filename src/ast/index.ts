@@ -1,59 +1,22 @@
 import {
-  Producer, BufferElement, Token,
+  Producer, BufferElement,
   NumberToken, InterpolationToken, TermToken,
 } from '../parser'
+import { DNode, PNode, CNode, ANode, FNode } from './dice'
 import { BracketNode } from './bracket'
-import { ANode } from './dice/a'
-import { CNode } from './dice/c'
-import { DNode } from './dice/d'
-import { FNode } from './dice/f'
-import { PNode } from './dice/p'
 import { InterpolationNode } from './interpolation'
 import { NumberNode } from './number'
 import { SimpleNode } from './simple'
-import { DiceNode } from './node'
+import { Config } from '..'
 
 export * from './bracket'
 export * from './simple'
 export * from './number'
-export * from './dice/d'
-export * from './dice/p'
-export * from './dice/a'
-export * from './dice/c'
-export * from './dice/f'
-export * from './node'
+export * from './dice'
 
-export interface Config {
-  random?: (min: number, max: number) => number
-  maxRollCount?: number
-  env?: Record<string, string>
-  d?: {
-    a?: number
-    b?: number
-    c?: number
-    d?: number
-    e?: number
-  }
-  p?: {
-    a?: number
-    b?: number
-  }
-  a?: {
-    a?: number
-    b?: number
-    c?: number
-    d?: number
-    e?: number
-  }
-  c?: {
-    a?: number
-    b?: number
-    c?: number
-  }
-  f?: {
-    a?: number
-    b?: number
-  }
+export interface DiceNode<T = unknown> {
+  evaluation: T
+  eval(config: Config): number
 }
 
 interface Options extends DiceNode {

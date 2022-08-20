@@ -1,21 +1,26 @@
-import { Config } from './ast'
 import { parse } from './parser'
 import { random } from './utils'
-import { DiceNode, Polish } from './ast/node'
+import { DiceNode } from './ast'
 
 export * from './ast'
 export * from './parser'
+export * from './utils'
 
-export interface Dice {
-  root: DiceNode
-  (config?: Config, polishes?: Polish[]): number
+export interface Config {
+  random?: (min: number, max: number) => number
+  maxRollCount?: number
+  env?: Record<string, string>
+  d?: { a?: number, b?: number, c?: number, d?: number, e?: number }
+  p?: { a?: number, b?: number }
+  a?: { a?: number, b?: number, c?: number, d?: number, e?: number }
+  c?: { a?: number, b?: number, c?: number }
+  f?: { a?: number, b?: number }
 }
 
-export function dice(input: string): Dice {
+export function dice(input: string, config: Config = {}): [number, DiceNode] {
   const root = parse(input) as DiceNode
-  const dice = (env: Config = {}, polishes = []) => root.eval(getConfig(env), polishes)
-  Object.assign(dice, { root })
-  return dice as Dice
+  const value = root.eval(getConfig(config))
+  return [value, root]
 }
 
 function getConfig(config: Config = {}): Config {

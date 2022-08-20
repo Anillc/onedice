@@ -1,39 +1,34 @@
-import { fill, negative } from '../../utils'
-import { Config } from '..'
-import { DiceNode, Polish } from '../node'
+import { Config, fill, negative } from '../..'
+import { DiceNode } from '..'
 
-declare module '../..' {
-  interface Polishes {
-    'CNode': CPolish
-  }
-}
-
-export interface CPolish extends Polish {
+export interface CEvaluation {
   expression: string
   rounds: [number, boolean, boolean][][]
   a: number, b: number, c: number
+  value: number
 }
 
-export class CNode extends DiceNode {
-  protected polish: CPolish
+export class CNode implements DiceNode<CEvaluation> {
+  evaluation: CEvaluation
   constructor(
     public a: DiceNode,
     public b: DiceNode,
     public c: DiceNode,
-  ) { super() }
+  ) {}
 
-  protected _eval(config: Config, polishes: Polish[]): number {
-    const a = this.a?.eval(config, polishes) ?? config.c.a
-    const b = this.b?.eval(config, polishes) ?? config.c.b
-    const c = this.c?.eval(config, polishes) ?? config.c.c
+  eval(config: Config): number {
+    const a = this.a?.eval(config) ?? config.c.a
+    const b = this.b?.eval(config) ?? config.c.b
+    const c = this.c?.eval(config) ?? config.c.c
     if (negative(a, b, c)) throw new Error('参数不能为负数')
     if (a === null || b === null) throw new Error('参数错误: 参数错误： AcBmC 中 A, B 是必须的')
     if (b < 2) throw new Error('参数错误: AcBmC 中 B 不能小于 2')
     if (c < 1) throw new Error('参数错误: AcBmC 中 C 不能小于 1')
-    Object.assign(this.polish, {
+    this.evaluation = {
       a, b, c, rounds: [],
       expression: this.string(a, b, c),
-    })
+      value: null,
+    }
 
     let rollCount = 0
 
@@ -44,7 +39,7 @@ export class CNode extends DiceNode {
       rollCount += count
       if (rollCount > config.maxRollCount) throw new Error('掷出骰子过多')
       roll = fill(count).map(_ => [config.random(1, c), false, false])
-      this.polish.rounds.push(roll)
+      this.evaluation.rounds.push(roll)
       count = roll.filter(n => {
         if (n[0] < b) return false
         return n[1] = true
@@ -53,7 +48,9 @@ export class CNode extends DiceNode {
     }
     const max = Math.max(...roll.map(n => n[0]))
     roll.forEach(n => n[0] === max && (n[2] = true))
-    return round * c + max
+    const value = round * c + max
+    this.evaluation.value = value
+    return value
   }
 
   string(a: number, b: number, c: number) {

@@ -1,18 +1,17 @@
-import { Config } from '.'
-import { DiceNode, Polish } from './node'
+import { DiceNode } from '.'
+import { Config } from '..'
 
-declare module '..' {
-  interface Polishes {
-    'BracketNode': Polish
-  }
+export interface BracketEvaluation {
+  value: number
 }
 
-export class BracketNode extends DiceNode {
-  constructor(public inner: DiceNode) { super() }
+export class BracketNode implements DiceNode<BracketEvaluation> {
+  evaluation: BracketEvaluation
+  constructor(public inner: DiceNode) {}
 
-  protected _eval(config: Config, polishes: Polish[]): number {
-    const inner = this.inner.eval(config, polishes)
-    this.polish.value = inner
-    return inner
+  eval(config: Config): number {
+    const value = this.inner.eval(config)
+    this.evaluation = { value }
+    return value
   }
 }
