@@ -34,7 +34,7 @@ export class DNode implements DiceNode<DEvaluation> {
     if (b < 1) throw new Error('参数错误: AdB(kq)C(pb)DaE 中 B 不能小于 1')
     this.evaluation = {
       a, b, c, d, e, kq: this.kq, pb: this.pb,
-      expression: this.string(a, b, c, d ,e),
+      expression: this.expression(a, b, c, d ,e),
       aEvaluation: null, pbEvaluations: null,
       roll: null, value: null,
     }
@@ -76,7 +76,7 @@ export class DNode implements DiceNode<DEvaluation> {
     }
   }
 
-  string(a: number, b: number, c: number, d: number, e: number) {
+  expression(a: number, b: number, c: number, d: number, e: number) {
     const as = String(a ?? '')
     const bs = String(b ?? '')
     const cs = this.kq ? `${this.kq}${c}` : ''

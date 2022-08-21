@@ -22,7 +22,7 @@ export class FNode implements DiceNode<FEvaluation> {
     if (a > config.maxRollCount) throw new Error('掷出骰子过多')
     this.evaluation = {
       a, b,
-      expression: this.string(a, b),
+      expression: this.expression(a, b),
       roll: null, value: null,
     }
 
@@ -34,7 +34,7 @@ export class FNode implements DiceNode<FEvaluation> {
     return value
   }
 
-  string(a: number, b: number) {
+  expression(a: number, b: number) {
     const as = String(a ?? '')
     const bs = String(b ?? '')
     return as + 'f' + bs

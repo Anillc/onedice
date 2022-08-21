@@ -24,7 +24,7 @@ export class PNode implements DiceNode<PEvaluation> {
     if (b + 2 > config.maxRollCount) throw new Error('掷出骰子过多')
     this.evaluation = {
       a, b, pb: this.pb,
-      expression: this.string(a, b),
+      expression: this.expression(a, b),
       d100: null, roll: null, value: null,
     }
 
@@ -49,7 +49,7 @@ export class PNode implements DiceNode<PEvaluation> {
     return value
   }
 
-  string(a: number, b: number) {
+  expression(a: number, b: number) {
     return `${a ?? ''}${this.pb}${b ?? ''}`
   }
 }

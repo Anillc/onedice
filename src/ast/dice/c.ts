@@ -26,7 +26,7 @@ export class CNode implements DiceNode<CEvaluation> {
     if (c < 1) throw new Error('参数错误: AcBmC 中 C 不能小于 1')
     this.evaluation = {
       a, b, c, rounds: [],
-      expression: this.string(a, b, c),
+      expression: this.expression(a, b, c),
       value: null,
     }
 
@@ -53,7 +53,7 @@ export class CNode implements DiceNode<CEvaluation> {
     return value
   }
 
-  string(a: number, b: number, c: number) {
+  expression(a: number, b: number, c: number) {
     const as = String(a ?? '')
     const bs = String(b ?? '')
     const cs = c ? `m${c}` : ''

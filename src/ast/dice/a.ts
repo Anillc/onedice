@@ -30,7 +30,7 @@ export class ANode implements DiceNode<AEvaluation> {
     if (e < 1) throw new Error('参数错误: AaBkCqDmE 中 E 不能小于 1')
     this.evaluation = {
       a, b, c, d, e, rounds: [],
-      expression: this.string(a, b, c, d, e),
+      expression: this.expression(a, b, c, d, e),
       value: null,
     }
     
@@ -59,7 +59,7 @@ export class ANode implements DiceNode<AEvaluation> {
     return value
   }
 
-  string(a: number, b: number, c: number, d: number, e: number) {
+  expression(a: number, b: number, c: number, d: number, e: number) {
     const as = String(a ?? '')
     const bs = String(b ?? '')
     const cs = c !== null ? `k${c}` : ''
