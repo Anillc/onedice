@@ -102,12 +102,12 @@ export class DNode implements DiceNode<DEvaluation> {
     const d = this.d ? this.d.toString(indentation + 1) : this.evaluation.d
     const e = this.e ? this.e.toString(indentation + 1) : this.evaluation.e
     const show = [
-      a !== null ? `A: ${a}` : '',
-      b !== null ? `B: ${b}` : '',
-      c !== null ? `C: ${c}` : '',
-      d !== null ? `D: ${d}` : '',
-      e !== null ? `E: ${e}` : '',
-    ].join(', ')
+      a !== null ? `A: ${a}` : null,
+      b !== null ? `B: ${b}` : null,
+      c !== null ? `C: ${c}` : null,
+      d !== null ? `D: ${d}` : null,
+      e !== null ? `E: ${e}` : null,
+    ].filter(n => n).join(', ')
     const result = this.evaluation.value
     if (this.evaluation.e !== null) {
       const as = this.evaluation.aNode.toString(indentation)
