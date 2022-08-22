@@ -1,11 +1,13 @@
 {
   "name": "@onedice/core",
-  "version": "0.0.1",
+  "version": "1.0.0",
   "description": "node implement of onedice",
   "main": "lib/index.js",
   "author": "anillc",
   "license": "MIT",
-  "files": ["lib"],
+  "files": [
+    "lib"
+  ],
   "devDependencies": {
     "@types/js-yaml": "^4.0.5",
     "@types/lodash.groupby": "^4.6.7",
