@@ -7,11 +7,13 @@ import { BracketNode } from './bracket'
 import { InterpolationNode } from './interpolation'
 import { NumberNode } from './number'
 import { SimpleNode } from './simple'
+import { UnaryNode } from './unary'
 import { Config } from '..'
 
 export * from './bracket'
 export * from './simple'
 export * from './number'
+export * from './unary'
 export * from './dice'
 
 export interface DiceNode<T = unknown> {
@@ -45,9 +47,8 @@ export function resolve(producer: Producer, nodes: BufferElement[]): DiceNode {
     case 4:
     case 5: {
       const operator = nodes[0] as TermToken
-      const left = new NumberNode(0)
       const right = nodes[1] as DiceNode
-      return new SimpleNode(operator.value, left, right)
+      return new UnaryNode(operator.value, right)
     }
     case 6:
     case 10:
