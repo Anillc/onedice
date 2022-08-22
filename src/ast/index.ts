@@ -17,6 +17,9 @@ export * from './dice'
 export interface DiceNode<T = unknown> {
   evaluation: T
   eval(config: Config): number
+  // If this node contains dices. Used to determine whether to show details
+  pure(): boolean
+  toString(indentation?: number): string
 }
 
 interface Options extends DiceNode {

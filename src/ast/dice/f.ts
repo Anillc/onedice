@@ -1,5 +1,5 @@
-import { Config, fill, negative, sum } from '../..'
-import { DiceNode } from '..'
+import { Config, fill, negative, sum, indent } from '../..'
+import { DiceNode, NumberNode } from '..'
 
 export interface FEvaluation {
   expression: string
@@ -38,5 +38,26 @@ export class FNode implements DiceNode<FEvaluation> {
     const as = String(a ?? '')
     const bs = String(b ?? '')
     return as + 'f' + bs
+  }
+
+  pure(): boolean {
+    return false
+  }
+
+  toString(indentation = 0): string {
+    const roll = this.evaluation.roll.join(', ')
+    const result = this.evaluation.value
+    if (this.a?.pure() ?? true) {
+      return `{${roll}}(${result})`
+    }
+    const idt = indent(indentation)
+    const idt1 = indent(indentation + 1)
+    const lines = [
+      `{`,
+      `${idt1}A: ${this.a.toString(indentation + 1)}`,
+      `${idt1}roll: [${roll}]`,
+      `${idt}}(${result})`,
+    ]
+    return lines.join('\n')
   }
 }

@@ -1,5 +1,5 @@
 import { Config } from '..'
-import { DiceNode } from '.'
+import { DiceNode, NumberNode } from '.'
 
 export interface SimpleEvaluation {
   operator: string
@@ -44,5 +44,19 @@ export class SimpleNode implements DiceNode<SimpleEvaluation> {
       left, right, operator: this.operator, value
     }
     return value
+  }
+
+  pure(): boolean {
+    const left = this.left ? this.left.pure() : true
+    const right = this.right ? this.right.pure() : true
+    return left && right
+  }
+
+  toString(indentation = 0): string {
+    return `${
+      this.left.toString(indentation)
+    } ${this.operator} ${
+      this.right.toString(indentation)
+    }`
   }
 }

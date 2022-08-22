@@ -1,4 +1,4 @@
-import { Config } from '..'
+import { Config, indent } from '..'
 import { DiceNode } from '.'
 
 interface NumberEvaluation {
@@ -12,5 +12,13 @@ export class NumberNode implements DiceNode<NumberEvaluation> {
   eval(config: Config): number {
     this.evaluation = { value: this.num }
     return this.num
+  }
+
+  pure(): boolean {
+    return true
+  }
+
+  toString(indentation = 0): string {
+    return `${this.num}`
   }
 }

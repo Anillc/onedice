@@ -1,9 +1,10 @@
-import { Config, fill, negative } from '../..'
+import { Config, fill, negative, indent } from '../..'
 import { DiceNode } from '..'
 
 export interface CEvaluation {
   expression: string
   rounds: [number, boolean, boolean][][]
+  count: number, last: number
   a: number, b: number, c: number
   value: number
 }
@@ -26,6 +27,7 @@ export class CNode implements DiceNode<CEvaluation> {
     if (c < 1) throw new Error('参数错误: AcBmC 中 C 不能小于 1')
     this.evaluation = {
       a, b, c, rounds: [],
+      count: null, last: null,
       expression: this.expression(a, b, c),
       value: null,
     }
@@ -49,6 +51,8 @@ export class CNode implements DiceNode<CEvaluation> {
     const max = Math.max(...roll.map(n => n[0]))
     roll.forEach(n => n[0] === max && (n[2] = true))
     const value = round * c + max
+    this.evaluation.count = round
+    this.evaluation.last = max
     this.evaluation.value = value
     return value
   }
@@ -58,5 +62,37 @@ export class CNode implements DiceNode<CEvaluation> {
     const bs = String(b ?? '')
     const cs = c ? `m${c}` : ''
     return as + 'c' + bs + cs
+  }
+
+  pure(): boolean {
+    return false
+  }
+
+  toString(indentation = 0): string {
+    const idt = indent(indentation)
+    const idt1 = indent(indentation + 1)
+    const idt2 = indent(indentation + 2)
+    const a = this.a ? this.a.toString(indentation + 1) : this.evaluation.a
+    const b = this.b ? this.b.toString(indentation + 1) : this.evaluation.b
+    const c = this.c ? this.c.toString(indentation + 1) : this.evaluation.c
+    const { count, last, value: result, c: cNum } = this.evaluation
+    const rounds = this.evaluation.rounds
+      .map(round => {
+        const r = round.map(([n, s1, s2]) => {
+          if (s1 && !s2) return `<${n}>`
+          if (!s1 && s2) return `[${n}]`
+          // this won't appear in c
+          // if (s1 && s2) return `<[${n}]>`
+          return `${n}`
+        }).join(', ')
+        return `${idt2}{${r}}`
+      }).join('\n')
+    const lines = [
+      `{`,
+      `${idt1}A: ${a}, B: ${b}, C: ${c}`,
+      `${idt1}rounds: {\n${rounds}\n${idt1}}`,
+      `${idt}}(${count} * ${cNum} + ${last})(${result})`,
+    ]
+    return lines.join('\n')
   }
 }

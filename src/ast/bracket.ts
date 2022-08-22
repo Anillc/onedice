@@ -14,4 +14,12 @@ export class BracketNode implements DiceNode<BracketEvaluation> {
     this.evaluation = { value }
     return value
   }
+
+  pure(): boolean {
+    return this.inner.pure()
+  }
+
+  toString(indentation = 0) {
+    return `(${this.inner.toString(indentation)})`
+  }
 }

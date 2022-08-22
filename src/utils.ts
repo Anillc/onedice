@@ -13,3 +13,7 @@ export function fill(size: number) {
 export function negative(...nums: number[]) {
   return nums.find(num => num < 0) !== undefined
 }
+
+export function indent(count: number) {
+  return fill(count).map(_ => '  ').join('')
+}

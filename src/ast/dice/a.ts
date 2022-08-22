@@ -1,4 +1,4 @@
-import { Config, fill, negative } from '../..'
+import { Config, fill, negative, indent } from '../..'
 import { DiceNode } from '..'
 
 export interface AEvaluation {
@@ -66,5 +66,41 @@ export class ANode implements DiceNode<AEvaluation> {
     const ds = d !== null ? `q${d}` : ''
     const es = e !== null ? `m${e}` : ''
     return as + 'a' + bs + cs + ds + es
+  }
+
+  pure(): boolean {
+    return false
+  }
+
+  toString(indentation = 0): string {
+    const idt = indent(indentation)
+    const idt1 = indent(indentation + 1)
+    const idt2 = indent(indentation + 2)
+    const a = this.a ? this.a.toString(indentation + 1) : this.evaluation.a
+    const b = this.b ? this.b.toString(indentation + 1) : this.evaluation.b
+    const c = this.c ? this.c.toString(indentation + 1) : this.evaluation.c
+    const d = this.d ? this.d.toString(indentation + 1) : this.evaluation.d
+    const e = this.e ? this.e.toString(indentation + 1) : this.evaluation.e
+    const result = this.evaluation.value
+    const rounds = this.evaluation.rounds
+      .map(round => {
+        const r = round.map(([n, s1, s2]) => {
+          if (s1 && !s2) return `<${n}>`
+          if (!s1 && s2) return `[${n}]`
+          if (s1 && s2) return `<[${n}]>`
+          return `${n}`
+        }).join(', ')
+        return `${idt2}{${r}}`
+      }).join('\n')
+    const adds = this.evaluation.rounds
+      .map(round => round.filter(n => n[2]).length)
+      .join(' + ')
+    const lines = [
+      `{`,
+      `${idt1}A: ${a}, B: ${b}, C: ${c}, ${d !== null ? `D: ${d}, ` : ''}E: ${e}`,
+      `${idt1}rounds: {\n${rounds}\n${idt1}}`,
+      `${idt}}(${adds})(${result})`,
+    ]
+    return lines.join('\n')
   }
 }

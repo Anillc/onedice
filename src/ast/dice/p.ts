@@ -1,5 +1,5 @@
-import { Config, fill, negative } from '../..'
-import { DiceNode } from '..'
+import { Config, fill, negative, indent } from '../..'
+import { DiceNode, NumberNode } from '..'
 
 export interface PEvaluation {
   expression: string
@@ -51,5 +51,30 @@ export class PNode implements DiceNode<PEvaluation> {
 
   expression(a: number, b: number) {
     return `${a ?? ''}${this.pb}${b ?? ''}`
+  }
+
+  pure(): boolean {
+    return false
+  }
+
+  toString(indentation = 0): string {
+    const d100 = this.evaluation.d100
+    const pb = this.pb == 'p' ? 'punish' : 'bonus'
+    const roll = this.evaluation.roll
+      .map(([n, selected]) => selected ? `[${n}]` : n).join(', ')
+    const result = this.evaluation.value
+    if (this.b?.pure() ?? true) {
+      return `{D100: ${d100}, ${pb}: [${roll}]}(${result})`
+    }
+    const idt = indent(indentation)
+    const idt1 = indent(indentation + 1)
+    const lines = [
+      `{`,
+      `${idt1}D100: ${d100}`,
+      `${idt1}B: ${this.b.toString(indentation + 1)}`,
+      `${idt1}${pb}: [${roll}]`,
+      `${idt}}(${result})`,
+    ]
+    return lines.join('\n')
   }
 }

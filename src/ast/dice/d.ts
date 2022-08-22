@@ -1,11 +1,11 @@
-import { Config, dice, fill, negative, sum } from '../..'
+import { Config, dice, fill, negative, sum, indent } from '../..'
 import { DiceNode } from '..'
-import { AEvaluation, PEvaluation } from '.'
+import { ANode, PNode } from '.'
 
 export interface DEvaluation {
   expression: string
-  aEvaluation: AEvaluation
-  pbEvaluations: PEvaluation[]
+  aNode: ANode
+  pNodes: PNode[]
   roll: [number, boolean][]
   a: number, b: number, c: number, d: number, e: number
   kq: 'k' | 'q', pb: 'p' | 'b'
@@ -35,14 +35,13 @@ export class DNode implements DiceNode<DEvaluation> {
     this.evaluation = {
       a, b, c, d, e, kq: this.kq, pb: this.pb,
       expression: this.expression(a, b, c, d ,e),
-      aEvaluation: null, pbEvaluations: null,
+      aNode: null, pNodes: null,
       roll: null, value: null,
     }
 
     if (e !== null) {
-      const aPolishes: AEvaluation[] = []
       const [value, node] = dice(`${a}a${b + 1}k${e}m${b}`, config)
-      this.evaluation.aEvaluation = node.evaluation as AEvaluation
+      this.evaluation.aNode = node as ANode
       this.evaluation.value = value
       return value
     } else {
@@ -53,7 +52,7 @@ export class DNode implements DiceNode<DEvaluation> {
 
       if (this.pb) {
         const pbs = fill(a).map(_ => dice(`${this.pb}${d}`, config))
-        this.evaluation.pbEvaluations = pbs.map(n => n[1].evaluation as PEvaluation)
+        this.evaluation.pNodes = pbs.map(n => n[1] as PNode)
         const value = sum(pbs.map(n => n[0]))
         this.evaluation.value = value
         return value
@@ -83,5 +82,81 @@ export class DNode implements DiceNode<DEvaluation> {
     const ds = this.pb ? `${this.pb}${d}` : ''
     const es = e !== null ? `a${e}` : ''
     return as + 'd' + bs + cs + ds + es
+  }
+
+  pure(): boolean {
+    return false
+  }
+
+  toString(indentation = 0): string {
+    const idt = indent(indentation)
+    const idt1 = indent(indentation + 1)
+    const pure = (this.a?.pure() ?? true)
+      && (this.b?.pure() ?? true)
+      && (this.c?.pure() ?? true)
+      && (this.d?.pure() ?? true)
+      && (this.e?.pure() ?? true)
+    const a = this.a ? this.a.toString(indentation + 1) : this.evaluation.a
+    const b = this.b ? this.b.toString(indentation + 1) : this.evaluation.b
+    const c = this.c ? this.c.toString(indentation + 1) : this.evaluation.c
+    const d = this.d ? this.d.toString(indentation + 1) : this.evaluation.d
+    const e = this.e ? this.e.toString(indentation + 1) : this.evaluation.e
+    const show = [
+      a !== null ? `A: ${a}` : '',
+      b !== null ? `B: ${b}` : '',
+      c !== null ? `C: ${c}` : '',
+      d !== null ? `D: ${d}` : '',
+      e !== null ? `E: ${e}` : '',
+    ].join(', ')
+    const result = this.evaluation.value
+    if (this.evaluation.e !== null) {
+      const as = this.evaluation.aNode.toString(indentation)
+      return [
+        `{`,
+        `${idt1}${show}`,
+        `${idt1}${as}`,
+        `${idt}}(${result})`,
+      ].join('\n')
+    }
+    if (this.kq) {
+      if (pure) {
+        const roll = this.evaluation.roll
+          .map(([n, selected]) => selected ? `[${n}]` : n).join(', ')
+        return `{${roll}}(${result})`
+      }
+      return [
+        `{`,
+        `${idt1}${show}`,
+        `${idt}}(${result})`,
+      ].join('\n')
+    }
+    if (this.pb) {
+      if (this.evaluation.a === 1 && pure) {
+        return this.evaluation.pNodes[0].toString(indentation)
+      }
+      const idt = indent(indentation)
+      const idt1 = indent(indentation + 1)
+      const pNodes = this.evaluation.pNodes
+      const pbs = pNodes.map(n => idt1 + n.toString(indentation + 1))
+      const adds = pNodes.map(n => n.evaluation.value).join(' + ')
+      const lines = [
+        `{`,
+        `${idt1}${show}`,
+        ...pbs,
+        `${idt}}(${adds})(${result})`,
+      ]
+      return lines.join('\n')
+    }
+    const roll = this.evaluation.roll.map(n => n[0]).join(', ')
+    if (pure) {
+      if (this.evaluation.a === 1) return `(${result})`
+      return `{${roll}}(${result})`
+    }
+    return [
+      `{`,
+      `${idt1}${show}`,
+      `${idt1}roll: [${roll}]`,
+      `${idt}}(${result})`
+    ].join('\n')
   }
 }

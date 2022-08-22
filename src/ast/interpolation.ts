@@ -1,9 +1,9 @@
-import { Config, dice } from '..'
+import { Config, dice, indent } from '..'
 import { DiceNode } from '.'
 
 export interface InterpolationEvaluation {
   input: string
-  inputEvaluation: unknown
+  node: DiceNode
   value: number
 }
 
@@ -20,8 +20,16 @@ export class InterpolationNode implements DiceNode<InterpolationEvaluation> {
     })
     this.evaluation = {
       input, value,
-      inputEvaluation: node.evaluation,
+      node,
     }
     return value
+  }
+
+  pure(): boolean {
+    return false
+  }
+  
+  toString(indentation = 0): string {
+    return `(${this.evaluation.node.toString(indentation)})`
   }
 }
