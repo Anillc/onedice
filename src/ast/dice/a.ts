@@ -94,6 +94,7 @@ export class ANode implements DiceNode<AEvaluation> {
       }).join('\n')
     const adds = this.evaluation.rounds
       .map(round => round.filter(n => n[2]).length)
+      .filter(n => n !== 0)
       .join(' + ')
     const lines = [
       `{`,

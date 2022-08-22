@@ -63,7 +63,7 @@ export class DNode implements DiceNode<DEvaluation> {
       this.evaluation.roll = [...roll]
       if (this.kq) {
         if (this.kq === 'k') {
-          roll.splice(0, b - c + 1)
+          roll.splice(0, a - c)
         } else {
           roll.splice(c)
         }
@@ -138,7 +138,8 @@ export class DNode implements DiceNode<DEvaluation> {
       const idt1 = indent(indentation + 1)
       const pNodes = this.evaluation.pNodes
       const pbs = pNodes.map(n => idt1 + n.toString(indentation + 1))
-      const adds = pNodes.map(n => n.evaluation.value).join(' + ')
+      const adds = pNodes.map(n => n.evaluation.value)
+        .filter(n => n !== 0).join(' + ')
       const lines = [
         `{`,
         `${idt1}${show}`,
