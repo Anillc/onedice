@@ -25,8 +25,10 @@ interface Itemset {
 const g = load(readFileSync(resolve(__dirname, './grammar.yaml'), 'utf-8')) as any
 
 let terms: string[] = []
-let shiftList: number[] = []
-let reduceList: number[] = []
+
+// id and position
+let shiftList: [number, number][] = []
+let reduceList: [number, number][] = []
 const grammars: Record<string, Producer[]> = {}
 
 for (const [key, value] of Object.entries(g)) {
@@ -35,11 +37,11 @@ for (const [key, value] of Object.entries(g)) {
     continue
   }
   if (key === 'shift') {
-    shiftList = value as number[]
+    shiftList = value as [number, number][]
     continue
   }
   if (key === 'reduce') {
-    reduceList = value as number[]
+    reduceList = value as [number, number][]
     continue
   }
   const producers: string[] = Array.isArray(value) ? value : [value]
@@ -205,7 +207,7 @@ function toLALR(itemsets: Itemset[]) {
 }
 
 enum ActionType {
-  shift, reduce, goto
+  shift = 0, reduce = 1, goto = 2
 }
 
 // [type, target]
@@ -214,10 +216,13 @@ type Action = [ActionType, number]
 function actionWrite(origin: Action, action: Action, item: Item) {
   if (action === origin) return false
   if(action[0] === origin[0] && action[1] === origin[1]) return false
-  if (action[0] === ActionType.shift && origin[0] === ActionType.reduce
-    && shiftList.includes(item.producer.id)) return true
-  if (action[0] === ActionType.reduce && origin[0] === ActionType.shift
-    && reduceList.includes(item.producer.id)) return true
+  // action: shift, origin: reduce -> shift list
+  // action: reduce, origin: shift -> reduce list
+  // other -> conflict
+  const list = [shiftList, reduceList][(action[0] << 1) + origin[0] - 1]
+  if (list.find(([id, position]) => {
+    return item.producer.id === id && item.position === position
+  })) return true
   throw new Error('conflict')
 }
 
@@ -249,7 +254,7 @@ clst.forEach(itemset => {
       const origin = states[token]
       const action: Action = terms.includes(token)
         ? [ActionType.shift, target]
-        : [ActionType.goto, target ]
+        : [ActionType.goto,  target]
       if (!origin || actionWrite(origin, action, item)) {
         states[token] = action
       }
