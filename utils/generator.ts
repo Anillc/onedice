@@ -47,6 +47,7 @@ for (const [key, value] of Object.entries(g)) {
   const producers: string[] = Array.isArray(value) ? value : [value]
   grammars[key] = producers.map(producer => {
     const [id, ...tokens] = producer.split(/\s+/)
+    if (Object.is(+id, NaN)) throw new Error(`id should be a number: ${id}`)
     return { name: key, id: +id, tokens }
   })
 }
