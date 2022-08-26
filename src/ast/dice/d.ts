@@ -110,7 +110,7 @@ export class DNode implements DiceNode<DEvaluation> {
     ].filter(n => n).join(', ')
     const result = this.evaluation.value
     if (this.evaluation.e !== null) {
-      const as = this.evaluation.aNode.toString(indentation)
+      const as = this.evaluation.aNode.toString(indentation + 1)
       return [
         `{`,
         `${idt1}${show}`,
