@@ -17,3 +17,7 @@ export function negative(...nums: number[]) {
 export function indent(count: number) {
   return fill(count).map(_ => '  ').join('')
 }
+
+export function isDigit(char: string) {
+  return char >= '0' && char <= '9'
+}
